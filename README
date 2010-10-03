@@ -1,2 +1,4 @@
-Rack::StripWWW is a piece of middleware that removes
-the www prefix.  See the specification for more details.
+Rack::StripWWW is a piece of Rack middleware that
+automatically redirects www.example.com to example.com.
+
+See the specification for more details.
