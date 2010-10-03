@@ -1,6 +1,6 @@
 Gem::Specification.new do |gem|
   gem.name = 'rack-strip-www'
-  gem.version = '0.0.1'
+  gem.version = '0.1.0'
   gem.authors = ['Daniel Brockman']
   gem.email = ['daniel@brockman.se']
   gem.homepage = 'http://github.com/dbrock/rack-strip-www'
