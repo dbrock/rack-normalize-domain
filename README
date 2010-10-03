@@ -1,0 +1,2 @@
+Rack::StripWWW is a piece of middleware that removes
+the www prefix.  See the specification for more details.
