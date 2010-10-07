@@ -1,8 +1,8 @@
-require 'rack-strip-www'
+require 'rack/strip-www'
 require 'rack/test'
 require 'uri'
 
-describe RackStripWWW do
+describe Rack::StripWWW do
   include Rack::Test::Methods
 
   it "should handle normal GET requests properly" do
@@ -72,7 +72,7 @@ describe RackStripWWW do
 
   def app
     Rack::Builder.new do
-      use RackStripWWW
+      use Rack::StripWWW
       run lambda { [200, { 'Content-Type ' => 'text/plain' }, ''] }
     end
   end

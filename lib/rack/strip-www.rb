@@ -1,6 +1,7 @@
+require 'rack'
 require 'uri'
 
-class RackStripWWW
+class Rack::StripWWW
   def initialize(app)
     @app = app
   end
