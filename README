@@ -1,4 +1,6 @@
-Rack::StripWWW is a piece of Rack middleware that
-automatically redirects www.example.com to example.com.
+Rack::NormalizeDomain is a piece of Rack middleware that
+normalizes the domains of all GET requests by redirecting.
+
+By default, it normalizes www.example.com to example.com.
 
 See the specification for more details.

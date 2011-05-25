@@ -1,30 +1,48 @@
-require 'rack/strip-www'
+require 'rack/normalize-domain'
 require 'rack/test'
 require 'uri'
 
-describe Rack::StripWWW do
+describe Rack::NormalizeDomain do
   include Rack::Test::Methods
 
-  it "should handle normal GET requests properly" do
+  it "should strip www properly" do
+    normalizer :strip_www
+
     should_redirect \
       'http://www.example.com' => 'http://example.com',
       'https://www.example.com' => 'https://example.com',
       'http://www.example.co.uk' => 'http://example.co.uk',
-      'http://www.example.com' => 'http://example.com',
+      'http://www.x.example.co.uk' => 'http://x.example.co.uk',
       'http://www.example.com/foo' => 'http://example.com/foo',
       'http://www.example.com/foo?bar=baz' => 'http://example.com/foo?bar=baz'
 
     should_not_redirect \
       'http://example.com',
-      'http://www.subdomain.example.co.uk'
+      'https://x.example.co.uk/foo?bar=baz'
+  end
+
+  it "should strip www by default" do
+    normalizer :strip_www
+    should_redirect \
+      'http://www.example.com' => 'http://example.com'
+    should_not_redirect \
+      'http://example.com'
+  end
+
+  it "should apply custom normalizer" do
+    normalizer :strip_www do |host| "#{host}.foo" end
+    should_redirect \
+      'http://www.example.com/bar' => 'http://example.com.foo/bar'
   end
 
   it "should not redirect hostless requests" do
+    normalizer :strip_www
     get('/')
     last_response.status.should == 200
   end
 
   it "should not redirect POST requests" do
+    normalizer :strip_www
     post_url('http://www.example.com')
     last_response.status.should == 200
   end
@@ -70,10 +88,15 @@ describe Rack::StripWWW do
     query ? Hash[query.split('&').map { |x| x.split('=') }] : {}
   end
 
+  def normalizer(value=nil, &block)
+    @normalizer_value = value
+    @normalizer_block = block
+  end
+
   def app
-    Rack::Builder.new do
-      use Rack::StripWWW
-      run lambda { [200, { 'Content-Type ' => 'text/plain' }, ''] }
-    end
+    app = Rack::Builder.new
+    app.use Rack::NormalizeDomain, @normalizer_value, &@normalizer_block
+    app.run lambda { [200, { 'Content-Type ' => 'text/plain' }, ''] }
+    app
   end
 end
